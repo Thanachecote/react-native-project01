@@ -19,7 +19,6 @@ const Logo = () => {
   return (
     <View>
       <Text style={styles.title}>
-        {isTitle ? (<Text>Welcome {profile.name}</Text>) : <Text>Not Found Name</Text>}
       </Text>
       <Button onPress={onTitle} title={"Press Me"}/>
     </View>

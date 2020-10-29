@@ -31,10 +31,10 @@ const Footer = ({users}) => {
   return (
     <View>
       <Text style={{fontWeight: 'bold', fontSize: 38}}>{select}</Text>
-      {users.length > 0 &&
+      {/* {users.length > 0 &&
         users.map((x, i) => {
           return <MyList key={i} i={i} x={x} onSelection={onSelection} />;
-        })}
+        })} */}
     </View>
   );
 };

@@ -13,7 +13,6 @@ const Test = () => {
   ];
   return (
     <View>
-      <Footer users={users} />
       <Logo />
       <MyInput />
     </View>
