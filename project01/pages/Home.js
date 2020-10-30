@@ -95,17 +95,27 @@ const HomeScreen = ({navigation, setProfile, profile}) => {
 
 const MyIcon = ({navigation}) => {
   return (
-    <Icon.Button
-      name="user"
-      background="#1572E8"
-      onPress={() =>
-        navigation.navigate('About', {
-          Id: 56,
-          Token: 'sdlkgfhdjgslkjhdfljfdhgl;dfkjhfds',
-        })
-      }>
-      Go to About
-    </Icon.Button>
+    <>
+      <Icon.Button
+        name="user"
+        background="#1572E8"
+        onPress={() =>
+          navigation.navigate('About', {
+            Id: 56,
+            Token: 'sdlkgfhdjgslkjhdfljfdhgl;dfkjhfds',
+          })
+        }>
+        Go to About
+      </Icon.Button>
+      <Icon.Button
+        name="camera"
+        background="red"
+        onPress={() =>
+          navigation.navigate('Camera')
+        }>
+        Camera
+      </Icon.Button>
+    </>
   );
 };
 

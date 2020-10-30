@@ -13,6 +13,7 @@ import RegisterScreen from './components/RegisterScreen';
 import LoginScreen from './components/LoginScreen';
 
 import { StoreProvider } from './data/StoreContext/StoreProvider';
+import CameraScreen from './components/CameraScreen';
 
 const {Navigator, Screen} = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -40,6 +41,7 @@ const HomeStack = () => {
       <Screen name="About" component={About} />
       <Screen name="Register" component={RegisterScreen} />
       <Screen name="Login" component={LoginScreen} />
+      <Screen name="Camera" component={CameraScreen} />
     </Navigator>
   );
 };
