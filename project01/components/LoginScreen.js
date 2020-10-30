@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useLayoutEffect, useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   Container,
@@ -17,6 +17,22 @@ import * as Yup from 'yup';
 
 import axios from 'axios';
 
+import {HeaderButtons, HeaderButton} from 'react-navigation-header-buttons';
+
+import {StoreData, getData} from '../data/ProvideContext';
+import {StoreContext} from '../data/StoreContext/StoreProvider';
+
+const IoniconsHeaderButton = (props) => (
+  // the `props` here come from <Item ... />
+  // you may access them and pass something else to `HeaderButton` if you like
+  <HeaderButton
+    IconComponent={Ionicons}
+    iconSize={30}
+    color="white"
+    {...props}
+  />
+);
+
 const validateSchema = Yup.object().shape({
   email: Yup.string()
     .email('Invalid email')
@@ -27,20 +43,54 @@ const validateSchema = Yup.object().shape({
 });
 
 const LoginScreen = ({navigation}) => {
+  const {profile, setProfile} = useContext(StoreContext);
+
   axios.defaults.baseURL = 'https://api.codingthailand.com';
-  const GetSignIn = (params, setSubmitting, navigation) => {
-    axios
+
+  const Authorize = async (token, navigation) => {
+    //console.log('token', token)
+    await axios
+      .get('/api/profile', {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      })
+      .then((res) => {
+        console.log('res.data 2', res.data);
+        StoreData(res.data.data.user);
+        setProfile(res.data.data.user);
+        navigation.navigate('Home');
+      })
+      .catch((er) => {
+        console.log('er 2', er);
+      });
+  };
+
+  const GetSignIn = async (params, setSubmitting, navigation) => {
+    await axios
       .post('api/login', params)
       .then((res) => {
         //alert(res.data.access_token);
-        navigation.navigate('Home')
+        //navigation.navigate('Home');
+        console.log('res.data.access_token', res.data);
+        Authorize(res.data.access_token, navigation);
+
+        //StoreData(res.data);
       })
       .catch((er) => {
         //alert(er.response.data.errors.email[0]);
-        console.log('er', er);
+        console.log('er 1', er);
+
+        //alert(er.response.data.message);
       })
       .finally(() => setSubmitting(false));
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: 'Login',
+    });
+  }, [navigation]);
 
   return (
     <Formik

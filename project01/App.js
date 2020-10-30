@@ -12,6 +12,8 @@ import DetailScreen from './components/DetailScreen';
 import RegisterScreen from './components/RegisterScreen';
 import LoginScreen from './components/LoginScreen';
 
+import { StoreProvider } from './data/StoreContext/StoreProvider';
+
 const {Navigator, Screen} = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -37,6 +39,7 @@ const HomeStack = () => {
       />
       <Screen name="About" component={About} />
       <Screen name="Register" component={RegisterScreen} />
+      <Screen name="Login" component={LoginScreen} />
     </Navigator>
   );
 };
@@ -52,16 +55,17 @@ const ProductStack = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="HomeStack"
-        drawerPosition="left"
-        drawerContent={(props) => <MenuScreen {...props} />}>
-        <Drawer.Screen name="HomeStack" component={HomeStack} />
-        <Drawer.Screen name="ProductStack" component={ProductStack} />
-        <Screen name="Login" component={LoginScreen} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <StoreProvider>
+      <NavigationContainer>
+        <Drawer.Navigator
+          initialRouteName="HomeStack"
+          drawerPosition="left"
+          drawerContent={(props) => <MenuScreen {...props} />}>
+          <Drawer.Screen name="HomeStack" component={HomeStack} />
+          <Drawer.Screen name="ProductStack" component={ProductStack} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </StoreProvider>
   );
 };
 

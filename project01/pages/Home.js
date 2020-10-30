@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,6 +10,10 @@ import {
   OverflowMenu,
 } from 'react-navigation-header-buttons';
 import Logo from '../components/LogoMain';
+import {getData} from '../data/ProvideContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {StoreContext} from '../data/StoreContext/StoreProvider';
 
 const IoniconsHeaderButton = (props) => (
   <HeaderButton
@@ -35,12 +39,16 @@ const HeaderBtn = ({title, iconName, desp, navigation}) => {
 const HeaderBtnAlert = ({title, iconName, desp, navigation}) => {
   return (
     <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-      <Item title={title} iconName={iconName} onPress={() => navigation.navigate('Register')} />
+      <Item
+        title={title}
+        iconName={iconName}
+        onPress={() => navigation.navigate('Register')}
+      />
     </HeaderButtons>
   );
 };
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({navigation, setProfile, profile}) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => <Logo />,
@@ -63,10 +71,24 @@ const HomeScreen = ({navigation}) => {
     });
   }, [navigation]);
 
+  useEffect(() => {
+    const getProfile = async () => {
+      const jsonValue = await AsyncStorage.getItem('@Key');
+
+      if (jsonValue) {
+        setProfile(JSON.parse(jsonValue));
+        console.log('profile home', profile);
+      }
+    };
+
+    getProfile();
+  }, []);
+
   return (
     <View>
-      <Text>Id: 0</Text>
-      <Text>Token: null</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 25}}>
+        Welcome to {profile && profile.name}
+      </Text>
     </View>
   );
 };
@@ -74,7 +96,7 @@ const HomeScreen = ({navigation}) => {
 const MyIcon = ({navigation}) => {
   return (
     <Icon.Button
-      name="home"
+      name="user"
       background="#1572E8"
       onPress={() =>
         navigation.navigate('About', {
@@ -99,11 +121,17 @@ const MyIconW = ({navigation}) => {
 };
 
 const Home = ({navigation}) => {
+  const {profile, setProfile} = useContext(StoreContext);
+
   return (
     <View style={styles.myHome}>
-      <Text>Home</Text>
+      <Ionicons name="home" size={80} color="#1572E8" />
       <MyIcon navigation={navigation} />
-      <HomeScreen navigation={navigation} />
+      <HomeScreen
+        navigation={navigation}
+        setProfile={setProfile}
+        profile={profile}
+      />
     </View>
   );
 };

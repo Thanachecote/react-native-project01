@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -20,6 +20,10 @@ import {
   Right,
   Switch,
 } from 'native-base';
+
+import {getData} from '../data/ProvideContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {StoreContext} from '../data/StoreContext/StoreProvider';
 
 const MenuScreenList = ({i, icon, navigation, name, params}) => {
   return (
@@ -54,6 +58,27 @@ const pg = [
 ];
 
 const MenuScreen = ({navigation}) => {
+  const {profile, setProfile} = useContext(StoreContext);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const jsonValue = await AsyncStorage.getItem('@Key');
+
+      if (jsonValue) {
+        setProfile(JSON.parse(jsonValue));
+        console.log('profile', profile);
+      }
+    };
+
+    getProfile();
+  }, []);
+
+  const getLogout = async (navigation) => {
+    await AsyncStorage.removeItem('@Key');
+    setProfile(null);
+    navigation.closeDrawer();
+  };
+
   return (
     <ScrollView>
       <View>
@@ -64,6 +89,10 @@ const MenuScreen = ({navigation}) => {
               'https://images.pexels.com/photos/1738762/pexels-photo-1738762.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
           }}>
           <Text style={styles.myTextScree}>เมนูหลัก</Text>
+          <Text style={styles.myTextScree}>
+            {profile && `${profile.name} (${profile.role})`}
+          </Text>
+          <Text style={styles.myTextScree}>{profile && profile.email}</Text>
         </ImageBackground>
         <Content>
           <ListItem
@@ -100,24 +129,45 @@ const MenuScreen = ({navigation}) => {
               <Icon active name="arrow-forward" />
             </Right>
           </ListItem>
-          <ListItem
-            icon
-            style={styles.myListItem}
-            onPress={() => {
-              navigation.navigate('Login');
-            }}>
-            <Left>
-              <Button style={{backgroundColor: '#007AFF'}}>
-                <Icon active name="user" type="FontAwesome" />
-              </Button>
-            </Left>
-            <Body>
-              <Text>Login</Text>
-            </Body>
-            <Right>
-              <Icon active name="arrow-forward" />
-            </Right>
-          </ListItem>
+          {profile ? (
+            <ListItem
+              icon
+              style={styles.myListItem}
+              onPress={() => {
+                getLogout(navigation);
+              }}>
+              <Left>
+                <Button style={{backgroundColor: 'red'}}>
+                  <Icon active name="sign-out" type="FontAwesome" />
+                </Button>
+              </Left>
+              <Body>
+                <Text>Logout</Text>
+              </Body>
+              <Right>
+                <Icon active name="arrow-forward" />
+              </Right>
+            </ListItem>
+          ) : (
+            <ListItem
+              icon
+              style={styles.myListItem}
+              onPress={() => {
+                navigation.navigate('Login');
+              }}>
+              <Left>
+                <Button style={{backgroundColor: '#007AFF'}}>
+                  <Icon active name="sign-in" type="FontAwesome" />
+                </Button>
+              </Left>
+              <Body>
+                <Text>Login</Text>
+              </Body>
+              <Right>
+                <Icon active name="arrow-forward" />
+              </Right>
+            </ListItem>
+          )}
         </Content>
       </View>
     </ScrollView>
